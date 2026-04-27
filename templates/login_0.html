@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <style> 
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wrapper {
+      width: 400px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid black;
+      padding: 24px;
+      gap: 12px;
+    }
+
+    input {
+      padding: 8px;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    #error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="error"></div>
+    <div class="controls">
+      <input id="name" placeholder="name"> /*utilisateur remplit la box name*/
+      <input id="password" placeholder="password"> /*la ou l'utilisateur met son mdp*/
+    </div>
+    <button id="register">Register</button>  /* boutons register*/
+    <button id="login">Login</button> /*bouton login*/
+  </div>
+
+  <script>
+    const errorDiv = document.getElementById("error");
+    const nameInput = document.getElementById("name"); /*prend les valeurs de input name */
+    const passwordInput = document.getElementById("password"); /*prend les valeurs de input password */
+    
+    async function send(route) { /* crée et declenche une requete http avec les valeurs d'au dessus*/
+    /*recupere les valeurs */
+      const name = nameInput.value; 
+      const password = passwordInput.value;
+      const response = await fetch(route, { /*lance la requete POST*/
+        method: "POST",
+        headers: {"Content-Type": "application/json"}, /*langage body = json*/
+        body: JSON.stringify({ name, password })
+      });
+      if (response.ok) {
+        window.location = "/chat"; /*si la reponse est de type ok renvoie vers chat */
+      } else {
+        const data = await response.json(); /*sinon affiche erreur*/
+        errorDiv.innerText = data.detail || "error";
+      }
+    }
+
+    document.getElementById("login").addEventListener("click", () => send("/login")); /*execute send(login) quand clique sur le bouton login*/
+    document.getElementById("register").addEventListener("click", () => send("/register")); /*execute send(register) quand clique sur le bouton register*/
+  </script>
+</body>
+</html>
